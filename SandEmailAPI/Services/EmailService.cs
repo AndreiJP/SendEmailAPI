@@ -3,7 +3,6 @@ using System.Net.Mail;
 using System.Net;
 using SandEmailAPI.Interfaces;
 
-// Questa classe implementa l'interfaccia IEmailService
 namespace SandEmailAPI.Services
 {
     public class EmailService : IEmailService
