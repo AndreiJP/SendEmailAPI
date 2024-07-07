@@ -1,6 +1,6 @@
-﻿using SandEmailAPI.Models;
+﻿using SendEmailAPI.Models;
 
-namespace SandEmailAPI.Interfaces
+namespace SendEmailAPI.Interfaces
 {
     public interface IEmailService
     {

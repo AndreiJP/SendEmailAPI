@@ -1,9 +1,9 @@
-﻿using SandEmailAPI.Models;
+﻿using SendEmailAPI.Models;
 using System.Net.Mail;
 using System.Net;
-using SandEmailAPI.Interfaces;
+using SendEmailAPI.Interfaces;
 
-namespace SandEmailAPI.Services
+namespace SendEmailAPI.Services
 {
     public class EmailService : IEmailService
     {

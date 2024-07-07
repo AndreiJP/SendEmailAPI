@@ -1,5 +1,5 @@
-using SandEmailAPI.Interfaces;
-using SandEmailAPI.Services;
+using SendEmailAPI.Interfaces;
+using SendEmailAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

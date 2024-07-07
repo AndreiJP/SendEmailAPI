@@ -1,4 +1,4 @@
-﻿namespace SandEmailAPI.Models
+﻿namespace SendEmailAPI.Models
 {
     public class EmailRequest
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SandEmailAPI.Interfaces;
-using SandEmailAPI.Models;
+using SendEmailAPI.Interfaces;
+using SendEmailAPI.Models;
 
-namespace SandEmailAPI.Controllers
+namespace SendEmailAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
