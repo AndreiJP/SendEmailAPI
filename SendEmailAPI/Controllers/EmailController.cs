@@ -14,10 +14,24 @@ namespace SendEmailAPI.Controllers
         {
             _emailService = emailService;
         }
-        [HttpPost]
+        [HttpPost("SendEmail")]
         public async Task<IActionResult> SendEmail([FromBody] EmailRequest requestParam)
         {
             bool response = await _emailService.SendEmailAsync(requestParam);
+            if (response)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
+
+        [HttpPost("SendMultipleEmail")]
+        public async Task<IActionResult> SendMultipleEmail([FromBody] EmailRequest requestParam)
+        {
+            bool response = await _emailService.SendMultipleEmailAsync(requestParam);
             if (response)
             {
                 return Ok(response);
