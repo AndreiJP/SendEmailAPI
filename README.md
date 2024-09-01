@@ -16,11 +16,10 @@ Per utilizzare `EmailService`, è necessario configurare le seguenti impostazion
 
 ```json
 {
-  "Email": {
+  "EmailAccount": {
     "Server": "smtp.tuo-server.com",
     "Port": "587",
-    "Username": "tuo-username",
-    "Password": "tua-password",
-    "PersonalEmail": "tuo-email@esempio.com"
+    "Email": "tuo-username",
+    "Password": "tua-password"
   }
 }
