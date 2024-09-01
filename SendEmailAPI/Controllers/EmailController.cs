@@ -15,9 +15,17 @@ namespace SendEmailAPI.Controllers
             _emailService = emailService;
         }
         [HttpPost]
-        public async Task<IActionResult> SendEmail([FromBody] EmailRequest request)
+        public async Task<IActionResult> SendEmail([FromBody] EmailRequest requestParam)
         {
-            return Ok(await _emailService.SendEmailAsync(request));
+            bool response = await _emailService.SendEmailAsync(requestParam);
+            if (response)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
         }
     }
 }

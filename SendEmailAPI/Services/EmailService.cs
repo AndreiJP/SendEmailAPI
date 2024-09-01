@@ -15,33 +15,32 @@ namespace SendEmailAPI.Services
             _configuration = configuration;
             _smtpClient = new SmtpClient
             {
-                Host = _configuration["Email:Server"],
-                Port = int.Parse(_configuration["Email:Port"]),
+                Host = _configuration["EmailAccount:Server"],
+                Port = int.Parse(_configuration["EmailAccount:Port"]),
                 EnableSsl = true,
-                Credentials = new NetworkCredential(_configuration["Email:Username"], _configuration["Email:Password"])
+                Credentials = new NetworkCredential(_configuration["EmailAccount:Email"], _configuration["EmailAccount:Password"])
             };
         }
 
-        public async Task<string> SendEmailAsync(EmailRequest request)
+        public async Task<bool> SendEmailAsync(EmailRequest requestParam)
         {
             try
             {
                 var mailMessage = new MailMessage
                 {
-                    From = new MailAddress(_configuration["Email:Username"]),
-                    Subject = request.Subject,
-                    Body = $"Nome: {request.Name}\nEmail: {request.Email}\nBody: {request.Body}",
+                    From = new MailAddress(_configuration["EmailAccount:Email"]),
+                    Subject = requestParam.Subject,
+                    Body = requestParam.Body,
                 };
 
-                mailMessage.To.Add(_configuration["Email:Username"]); 
-                mailMessage.To.Add(_configuration["Email:PersonalEmail"]);
+                mailMessage.To.Add(requestParam.ToEmail); 
 
                 await _smtpClient.SendMailAsync(mailMessage);
-                return "<spam>Email inviata con successo</spam>";
+                return true;
             }
             catch (Exception)
             {
-                return "<spam style='color: red;'>Si è verificato un errore, riprova più tardi</spam>";
+                return false;
             }
         }
     }
