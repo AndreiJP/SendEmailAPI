@@ -2,6 +2,7 @@
 using System.Net.Mail;
 using System.Net;
 using SendEmailAPI.Interfaces;
+using SendEmailAPI.Repositories;
 
 namespace SendEmailAPI.Services
 {
@@ -9,8 +10,9 @@ namespace SendEmailAPI.Services
     {
         private readonly SmtpClient _smtpClient;
         private readonly IConfiguration _configuration;
+        private readonly ILogRepository _logRepository;
 
-        public EmailService(IConfiguration configuration)
+        public EmailService(IConfiguration configuration, ILogRepository logRepository)
         {
             _configuration = configuration;
             _smtpClient = new SmtpClient
@@ -20,6 +22,7 @@ namespace SendEmailAPI.Services
                 EnableSsl = true,
                 Credentials = new NetworkCredential(_configuration["EmailAccount:Email"], _configuration["EmailAccount:Password"])
             };
+            _logRepository = logRepository;
         }
 
         public async Task<bool> SendEmailAsync(EmailRequest requestParam)
@@ -33,11 +36,12 @@ namespace SendEmailAPI.Services
                 {
                     From = new MailAddress(_configuration["EmailAccount:Email"]),
                     Subject = requestParam.Subject,
-                    Body = requestParam.Body,
+                    Body = requestParam.Body
                 };
                 mailMessage.To.Add(requestParam.ToEmail.First());
-
                 await _smtpClient.SendMailAsync(mailMessage);
+                DateTime timeStamp = DateTime.Now;
+                await AddEmailLogAsync(requestParam, requestParam.ToEmail.First(), timeStamp);
                 return true;
             }
             catch (Exception)
@@ -62,6 +66,8 @@ namespace SendEmailAPI.Services
                     };
                     mailMessage.To.Add(email);
                     await _smtpClient.SendMailAsync(mailMessage);
+                    DateTime timeStamp = DateTime.Now;
+                    await AddEmailLogAsync(requestParam, email, timeStamp);
                 }
 
                 return true;
@@ -70,6 +76,19 @@ namespace SendEmailAPI.Services
             {
                 return false;
             }
+        }
+
+        private async Task AddEmailLogAsync(EmailRequest requestParam, string toEmail, DateTime sentDate)
+        {
+            EmailLog log = new EmailLog()
+            {
+                Recipient = toEmail,
+                Subject = requestParam.Subject,
+                Body = requestParam.Body,
+                SentDate = sentDate
+            };
+
+            await _logRepository.AddLogAsync(log);
         }
     }
 }
