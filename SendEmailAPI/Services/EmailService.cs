@@ -25,67 +25,69 @@ namespace SendEmailAPI.Services
             _logRepository = logRepository;
         }
 
-        public async Task<bool> SendEmailAsync(EmailRequest requestParam)
+        public async Task<bool> SendMultipleEmailAsync(EmailRequest requestParams)
+        {
+            if (requestParams == null || requestParams.ToEmails == null || !requestParams.ToEmails.Any())
+                return false;
+
+            foreach (var toEmail in requestParams.ToEmails)
+            {
+                var singleEmailRequest = new EmailRequest
+                {
+                    Subject = requestParams.Subject,
+                    Body = requestParams.Body,
+                    ToEmails = new List<string> { toEmail }
+                };
+
+                var result = await SendEmailAsync(singleEmailRequest);
+                if (!result)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> SendEmailAsync(EmailRequest requestParams)
         {
             try
             {
-                if (requestParam.ToEmail.Count == 0)
-                    return false;
-
                 var mailMessage = new MailMessage
                 {
                     From = new MailAddress(_configuration["EmailAccount:Email"]),
-                    Subject = requestParam.Subject,
-                    Body = requestParam.Body
+                    Subject = requestParams.Subject,
+                    Body = requestParams.Body,
+                    IsBodyHtml = true
                 };
-                mailMessage.To.Add(requestParam.ToEmail.First());
+
+                mailMessage.To.Add(requestParams.ToEmails.First());
+
                 await _smtpClient.SendMailAsync(mailMessage);
-                DateTime timeStamp = DateTime.Now;
-                await AddEmailLogAsync(requestParam, requestParam.ToEmail.First(), timeStamp);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-        public async Task<bool> SendMultipleEmailAsync(EmailRequest requestParam)
-        {
-            try
-            {
-                if (requestParam.ToEmail.Count == 0)
-                    return false;
 
-                foreach (var email in requestParam.ToEmail)
-                {
-                    var mailMessage = new MailMessage
-                    {
-                        From = new MailAddress(_configuration["EmailAccount:Email"]),
-                        Subject = requestParam.Subject,
-                        Body = requestParam.Body,
-                    };
-                    mailMessage.To.Add(email);
-                    await _smtpClient.SendMailAsync(mailMessage);
-                    DateTime timeStamp = DateTime.Now;
-                    await AddEmailLogAsync(requestParam, email, timeStamp);
-                }
+                await AddEmailLogAsync(requestParams, requestParams.ToEmails.First(), EmailStatus.Success);
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                await AddEmailLogAsync(requestParams, requestParams.ToEmails.First(), EmailStatus.Error, ex.Message);
                 return false;
             }
         }
 
-        private async Task AddEmailLogAsync(EmailRequest requestParam, string toEmail, DateTime sentDate)
+
+
+
+
+        private async Task AddEmailLogAsync(EmailRequest requestParam, string toEmail, EmailStatus status, string errorMessage = "")
         {
             EmailLog log = new EmailLog()
             {
                 Recipient = toEmail,
                 Subject = requestParam.Subject,
                 Body = requestParam.Body,
-                SentDate = sentDate
+                SentDate = DateTime.Now,
+                Status = status,
+                ErrorMessage = errorMessage
             };
 
             await _logRepository.AddLogAsync(log);

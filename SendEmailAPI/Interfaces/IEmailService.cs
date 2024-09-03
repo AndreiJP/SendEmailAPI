@@ -4,7 +4,7 @@ namespace SendEmailAPI.Interfaces
 {
     public interface IEmailService
     {
-        public Task<bool> SendEmailAsync(EmailRequest requestParam);
-        public Task<bool> SendMultipleEmailAsync(EmailRequest requestParam);
+        public Task<bool> SendEmailAsync(EmailRequest requestParams);
+        public Task<bool> SendMultipleEmailAsync(EmailRequest requestParams);
     }
 }
