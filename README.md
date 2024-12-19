@@ -1,6 +1,6 @@
 ## Introduzione
 
-La classe `EmailService` implementa l'interfaccia `IEmailService` e fornisce una funzionalità per inviare email. Utilizza il client SMTP per gestire la connessione e l'invio delle email. Questo servizio è configurato tramite il file di configurazione dell'applicazione e supporta l'invio di email in modo asincrono.
+La classe `EmailService` implementa l'interfaccia `IEmailService` e fornisce una funzionalità per inviare email. Utilizza il client SMTP per gestire la connessione e l'invio. Questo servizio è configurato tramite il file di configurazione dell'applicazione e supporta l'invio di email in modo asincrono.
 
 ## Prerequisiti
 
